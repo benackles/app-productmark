@@ -1,0 +1,243 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Brand Colors - Light Mode */
+  --background: 250 248 244; /* #FAF8F4 - ivory sand */
+  --foreground: 30 30 30; /* #1E1E1E - charcoal */
+
+  --card: 255 255 255;
+  --card-foreground: 30 30 30;
+
+  --popover: 255 255 255;
+  --popover-foreground: 30 30 30;
+
+  --primary: 107 143 113; /* #6B8F71 - sage green */
+  --primary-foreground: 255 255 255;
+
+  --secondary: 101 67 33; /* #654321 - ground brown */
+  --secondary-foreground: 255 255 255;
+
+  --accent: 234 179 8; /* #EAB308 - sunflower yellow */
+  --accent-foreground: 30 30 30;
+
+  --muted: 120 113 108; /* #78716C - warm gray */
+  --muted-foreground: 120 113 108;
+
+  --destructive: 239 68 68;
+  --destructive-foreground: 255 255 255;
+
+  --border: 229 231 235;
+  --input: 229 231 235;
+  --ring: 107 143 113;
+
+  --chart-1: 107 143 113;
+  --chart-2: 234 179 8;
+  --chart-3: 101 67 33;
+  --chart-4: 120 113 108;
+  --chart-5: 59 130 246;
+
+  --radius: 0.625rem;
+
+  --sidebar: 250 248 244;
+  --sidebar-foreground: 30 30 30;
+  --sidebar-primary: 107 143 113;
+  --sidebar-primary-foreground: 255 255 255;
+  --sidebar-accent: 234 179 8;
+  --sidebar-accent-foreground: 30 30 30;
+  --sidebar-border: 229 231 235;
+  --sidebar-ring: 107 143 113;
+
+  /* Custom Shadows */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-soft-lg: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-soft-xl: 0 8px 24px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(107, 143, 113, 0.15);
+  --shadow-glow-sm: 0 0 10px rgba(107, 143, 113, 0.1);
+}
+
+.dark {
+  /* Brand Colors - Dark Mode */
+  --background: 43 33 27; /* #2B211B - earth black */
+  --foreground: 250 248 244; /* #FAF8F4 - ivory sand */
+
+  --card: 43 33 27;
+  --card-foreground: 250 248 244;
+
+  --popover: 43 33 27;
+  --popover-foreground: 250 248 244;
+
+  --primary: 107 143 113; /* #6B8F71 - sage green */
+  --primary-foreground: 255 255 255;
+
+  --secondary: 101 67 33; /* #654321 - ground brown */
+  --secondary-foreground: 255 255 255;
+
+  --accent: 234 179 8; /* #EAB308 - sunflower yellow */
+  --accent-foreground: 30 30 30;
+
+  --muted: 120 113 108; /* #78716C - warm gray */
+  --muted-foreground: 163 163 163;
+
+  --destructive: 239 68 68;
+  --destructive-foreground: 255 255 255;
+
+  --border: 55 65 81;
+  --input: 55 65 81;
+  --ring: 107 143 113;
+
+  --chart-1: 107 143 113;
+  --chart-2: 234 179 8;
+  --chart-3: 101 67 33;
+  --chart-4: 120 113 108;
+  --chart-5: 96 165 250;
+
+  --sidebar: 43 33 27;
+  --sidebar-foreground: 250 248 244;
+  --sidebar-primary: 107 143 113;
+  --sidebar-primary-foreground: 255 255 255;
+  --sidebar-accent: 234 179 8;
+  --sidebar-accent-foreground: 30 30 30;
+  --sidebar-border: 55 65 81;
+  --sidebar-ring: 107 143 113;
+}
+
+@theme inline {
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-card: rgb(var(--card));
+  --color-card-foreground: rgb(var(--card-foreground));
+  --color-popover: rgb(var(--popover));
+  --color-popover-foreground: rgb(var(--popover-foreground));
+  --color-primary: rgb(var(--primary));
+  --color-primary-foreground: rgb(var(--primary-foreground));
+  --color-secondary: rgb(var(--secondary));
+  --color-secondary-foreground: rgb(var(--secondary-foreground));
+  --color-muted: rgb(var(--muted));
+  --color-muted-foreground: rgb(var(--muted-foreground));
+  --color-accent: rgb(var(--accent));
+  --color-accent-foreground: rgb(var(--accent-foreground));
+  --color-destructive: rgb(var(--destructive));
+  --color-destructive-foreground: rgb(var(--destructive-foreground));
+  --color-border: rgb(var(--border));
+  --color-input: rgb(var(--input));
+  --color-ring: rgb(var(--ring));
+  --color-chart-1: rgb(var(--chart-1));
+  --color-chart-2: rgb(var(--chart-2));
+  --color-chart-3: rgb(var(--chart-3));
+  --color-chart-4: rgb(var(--chart-4));
+  --color-chart-5: rgb(var(--chart-5));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: rgb(var(--sidebar));
+  --color-sidebar-foreground: rgb(var(--sidebar-foreground));
+  --color-sidebar-primary: rgb(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: rgb(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: rgb(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: rgb(var(--sidebar-accent-foreground));
+  --color-sidebar-border: rgb(var(--sidebar-border));
+  --color-sidebar-ring: rgb(var(--sidebar-ring));
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground min-h-screen;
+    background: linear-gradient(135deg, rgb(var(--background)) 0%, rgb(250 248 244) 100%);
+  }
+  .dark body {
+    background: linear-gradient(135deg, rgb(var(--background)) 0%, rgb(30 25 21) 100%);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Reader Mode Styles */
+.reader-content {
+  @apply text-foreground;
+}
+
+.reader-content p {
+  @apply mb-4 leading-relaxed;
+}
+
+.reader-content h1,
+.reader-content h2,
+.reader-content h3,
+.reader-content h4,
+.reader-content h5,
+.reader-content h6 {
+  @apply font-bold mt-8 mb-4 text-foreground;
+}
+
+.reader-content h1 {
+  @apply text-3xl;
+}
+
+.reader-content h2 {
+  @apply text-2xl;
+}
+
+.reader-content h3 {
+  @apply text-xl;
+}
+
+.reader-content a {
+  @apply text-primary underline hover:text-primary/80;
+}
+
+.reader-content img {
+  @apply rounded-lg my-6 max-w-full h-auto;
+}
+
+.reader-content blockquote {
+  @apply border-l-4 border-primary pl-4 py-2 my-4 italic text-muted-foreground;
+}
+
+.reader-content ul,
+.reader-content ol {
+  @apply ml-6 my-4 space-y-2;
+}
+
+.reader-content ul {
+  @apply list-disc;
+}
+
+.reader-content ol {
+  @apply list-decimal;
+}
+
+.reader-content code {
+  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.reader-content pre {
+  @apply bg-muted p-4 rounded-lg my-4 overflow-x-auto;
+}
+
+.reader-content pre code {
+  @apply bg-transparent p-0;
+}
+
+.reader-content table {
+  @apply w-full border-collapse my-4;
+}
+
+.reader-content th,
+.reader-content td {
+  @apply border border-border px-4 py-2;
+}
+
+.reader-content th {
+  @apply bg-muted font-semibold;
+}

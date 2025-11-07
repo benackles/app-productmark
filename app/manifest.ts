@@ -1,0 +1,32 @@
+import type { MetadataRoute } from "next"
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "ProductMark - Product Marketing Hub",
+    short_name: "ProductMark",
+    description: "A Progressive Web App for managing product marketing assets and sales plays",
+    start_url: "/",
+    scope: "/",
+    display: "standalone",
+    background_color: "#ffffff",
+    theme_color: "#6366f1",
+    orientation: "portrait-primary",
+    categories: ["business", "productivity", "marketing"],
+    lang: "en",
+    dir: "ltr",
+    icons: [
+      {
+        src: "/icon-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable any",
+      },
+      {
+        src: "/icon-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable any",
+      },
+    ],
+  }
+}

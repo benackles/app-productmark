@@ -1,0 +1,42 @@
+export const insightPrompts = {
+  Customer: [
+    "What problem were they trying to solve when they looked for a solution?",
+    "What's the moment of frustration or struggle they described?",
+    "What job are they trying to get done (functional, emotional, or social)?",
+    "What's the cost of doing nothing?",
+    "What do they wish was easier, faster, or more predictable?",
+    "What exact words or phrases did they use to describe the problem?",
+    "What outcome or benefit did they care about most?",
+    "What emotions or motivations came through (trust, control, speed, relief, pride)?",
+    "What 'so what?' insight does this reveal for messaging?",
+    "What surprised you about how they use (or don't use) the product?",
+    "What's driving churn, switching, or purchase decisions?",
+    "What does this tell us about priorities, workflow, or buying triggers?",
+  ],
+  Competitive: [
+    "What new feature, pricing change, or positioning shift did you notice?",
+    "How are they framing their differentiation — and how is it resonating?",
+    "What category, audience, or use case are they leaning into?",
+    "How does their messaging compare to ours (value vs. features)?",
+    "What are customers saying about them vs. us?",
+    "What pain points are they exploiting in their messaging?",
+    "Where are we clearly stronger — or weaker — in the eyes of the market?",
+    "What does this signal about their roadmap or strategy?",
+    "How might this shift buyer expectations or evaluation criteria?",
+    "What opportunity or threat does this create for us?",
+  ],
+  Market: [
+    "What trend or behavior is emerging among our target audience?",
+    "What macro factor (economic, tech, regulatory) could influence demand?",
+    "What's changing about how customers discover, evaluate, or buy products like ours?",
+    "What's gaining momentum across the category — or starting to fade?",
+    "What whitespace or underserved need is becoming visible?",
+    "What new segment, region, or vertical shows signs of growth?",
+    "What are analysts, journalists, or investors highlighting in this space?",
+    "What does this mean for our roadmap, messaging, or GTM motion?",
+    "How might this reshape the competitive landscape over the next year?",
+    "What early signal should we monitor or validate further?",
+  ],
+} as const
+
+export type InsightType = keyof typeof insightPrompts
