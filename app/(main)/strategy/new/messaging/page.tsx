@@ -10,7 +10,7 @@ export default function MessagingPage() {
         <p className="text-muted-foreground">Choose the type of messaging framework to create</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         <Link href="/strategy/new/messaging/tone-of-voice">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
             <CardHeader>
