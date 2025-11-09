@@ -11,6 +11,24 @@ export default function MessagingPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Link href="/strategy/new/messaging/tone-of-voice">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Volume2 className="h-5 w-5 text-primary" />
+                Tone of Voice Guide
+              </CardTitle>
+              <CardDescription>Define your brand's unique communication style</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Define how your brand communicates — the personality, principles, and writing style that make your
+                message sound unmistakably yours.
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+
         <Link href="/strategy/new/messaging/messaging-house">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
             <CardHeader>
@@ -42,24 +60,6 @@ export default function MessagingPage() {
               <p className="text-sm text-muted-foreground">
                 Define the structure, messaging, and flow of your website before writing—outlining key audiences, value
                 propositions, page goals, and calls to action.
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/strategy/new/messaging/tone-of-voice">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Volume2 className="h-5 w-5 text-primary" />
-                Tone of Voice Guide
-              </CardTitle>
-              <CardDescription>Define your brand's unique communication style</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Define how your brand communicates — the personality, principles, and writing style that make your
-                message sound unmistakably yours.
               </p>
             </CardContent>
           </Card>
