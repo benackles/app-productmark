@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MessageSquare, Presentation, Globe } from "lucide-react"
+import { MessageSquare, Presentation, Globe, Volume2 } from "lucide-react"
 import Link from "next/link"
 
 export default function MessagingPage() {
@@ -42,6 +42,24 @@ export default function MessagingPage() {
               <p className="text-sm text-muted-foreground">
                 Define the structure, messaging, and flow of your website before writing—outlining key audiences, value
                 propositions, page goals, and calls to action.
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/strategy/new/messaging/tone-of-voice">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Volume2 className="h-5 w-5 text-primary" />
+                Tone of Voice Guide
+              </CardTitle>
+              <CardDescription>Define your brand's unique communication style</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Define how your brand communicates — the personality, principles, and writing style that make your
+                message sound unmistakably yours.
               </p>
             </CardContent>
           </Card>
