@@ -167,7 +167,7 @@
 - **Network:** Check offline functionality
 
 ### Command Line
-\`\`\`bash
+```bash
 # Check manifest
 curl https://your-domain.com/manifest.json
 
@@ -176,7 +176,7 @@ curl https://your-domain.com/sw.js
 
 # Test icons
 curl -I https://your-domain.com/icon-192x192.png
-\`\`\`
+```
 
 ### Online Tools
 - **Lighthouse CI:** Automated PWA testing
