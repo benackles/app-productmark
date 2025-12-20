@@ -6,7 +6,8 @@ export interface EnablementAsset {
     | "website-copy"
     | "sales-pitch-deck"
     | "gtm-brief"
-    | "gtm-playbook" // Added GTM Playbook asset type
+    | "gtm-playbook"
+    | "gtm-communications-plan" // Added GTM Communications Plan asset type
     | "case-study"
     | "demo-script"
     | "objection-handling"
@@ -41,6 +42,7 @@ export const assetTypeLabels: Record<string, string> = {
   "sales-pitch-deck": "Sales Pitch Deck",
   "gtm-brief": "GTM Brief",
   "gtm-playbook": "GTM Playbook", // Added label for GTM Playbook
+  "gtm-communications-plan": "GTM Communications Plan", // Added label
   "case-study": "Case Study",
   "demo-script": "Demo Script",
   "objection-handling": "Objection Handling",
@@ -501,6 +503,41 @@ export const mockEnablementAssets: EnablementAsset[] = [
     ],
     relatedInsightIds: ["4", "6", "8"],
     relatedStrategyIds: ["gtm-2"],
+  },
+  {
+    id: "asset-13",
+    type: "gtm-communications-plan",
+    title: "Q1 GTM Communications Plan",
+    description:
+      "Communications plan for the Q1 product launch, including messaging, channels, timing, and key stakeholders.",
+    status: "draft",
+    createdAt: new Date("2024-03-25"),
+    updatedAt: new Date("2024-03-25"),
+    tags: ["gtm", "communications", "plan", "q1"],
+    sourceOfTruth: {
+      type: "document",
+      name: "Q1 GTM Communications Plan",
+      url: "https://docs.google.com/document/d/q1-gtm-plan",
+      permissions: "edit",
+    },
+    stakeholders: [
+      {
+        id: "sh28",
+        name: "John Doe",
+        email: "john.doe@productmark.com",
+        role: "pm",
+        status: "pending",
+      },
+      {
+        id: "sh29",
+        name: "Jane Smith",
+        email: "jane.smith@productmark.com",
+        role: "pmm",
+        status: "pending",
+      },
+    ],
+    relatedInsightIds: ["11"],
+    relatedStrategyIds: ["gtm-3"],
   },
 ]
 

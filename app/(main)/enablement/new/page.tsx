@@ -47,6 +47,14 @@ const assetTypes = [
     href: "/enablement/new/gtm-playbook",
   },
   {
+    id: "gtm-communications-plan",
+    title: "GTM Communications Plan",
+    description:
+      "Strategic communications plan for launches—coordinate messaging, channels, content, and timing across all stakeholders",
+    icon: "📣",
+    href: "/enablement/new/gtm-communications-plan",
+  },
+  {
     id: "case-study",
     title: "Case Study",
     description: "Document customer success stories with compelling before/after narratives",
