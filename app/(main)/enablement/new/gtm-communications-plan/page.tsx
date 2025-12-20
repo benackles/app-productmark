@@ -6,7 +6,7 @@ export default function GTMCommunicationsPlanPage() {
   return (
     <PageLayout
       icon={Radio}
-      title="Create GTM Communications Plan"
+      title="Create GTM Comms Plan"
       description="Build a strategic communications plan to coordinate messaging, channels, and timing across all launch activities."
     >
       <GTMCommunicationsPlanForm />

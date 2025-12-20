@@ -42,7 +42,7 @@ export const assetTypeLabels: Record<string, string> = {
   "sales-pitch-deck": "Sales Pitch Deck",
   "gtm-brief": "GTM Brief",
   "gtm-playbook": "GTM Playbook", // Added label for GTM Playbook
-  "gtm-communications-plan": "GTM Communications Plan", // Added label
+  "gtm-communications-plan": "GTM Comms Plan", // Renamed label
   "case-study": "Case Study",
   "demo-script": "Demo Script",
   "objection-handling": "Objection Handling",
@@ -507,7 +507,7 @@ export const mockEnablementAssets: EnablementAsset[] = [
   {
     id: "asset-13",
     type: "gtm-communications-plan",
-    title: "Q1 GTM Communications Plan",
+    title: "Q1 GTM Comms Plan", // Renamed title
     description:
       "Communications plan for the Q1 product launch, including messaging, channels, timing, and key stakeholders.",
     status: "draft",
@@ -516,7 +516,7 @@ export const mockEnablementAssets: EnablementAsset[] = [
     tags: ["gtm", "communications", "plan", "q1"],
     sourceOfTruth: {
       type: "document",
-      name: "Q1 GTM Communications Plan",
+      name: "Q1 GTM Comms Plan", // Renamed name
       url: "https://docs.google.com/document/d/q1-gtm-plan",
       permissions: "edit",
     },

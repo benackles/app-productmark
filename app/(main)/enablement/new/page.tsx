@@ -48,7 +48,7 @@ const assetTypes = [
   },
   {
     id: "gtm-communications-plan",
-    title: "GTM Communications Plan",
+    title: "GTM Comms Plan",
     description:
       "Strategic communications plan for launches—coordinate messaging, channels, content, and timing across all stakeholders",
     icon: "📣",
