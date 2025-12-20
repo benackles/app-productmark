@@ -7,139 +7,179 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Tag, Plus, X } from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+import { Tag, Plus, X, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
-interface CommunicationTactic {
+interface Audience {
   id: string
+  name: string
+  persona: string
+  priority: number
+  desiredAction: string
+}
+
+interface ChannelAsset {
+  id: string
+  audienceName: string
   channel: string
-  contentType: string
-  audience: string
-  timing: string
+  assetType: string
+  visibility: string
   owner: string
+  status: string
 }
 
 export function GTMCommunicationsPlanForm() {
-  const [launchDate, setLaunchDate] = useState<Date>()
-  const [tactics, setTactics] = useState<CommunicationTactic[]>([
-    { id: "1", channel: "", contentType: "", audience: "", timing: "", owner: "" },
+  const [primaryGoal, setPrimaryGoal] = useState<string>("")
+  const [audiences, setAudiences] = useState<Audience[]>([
+    { id: "1", name: "", persona: "", priority: 1, desiredAction: "" },
+  ])
+  const [channelAssets, setChannelAssets] = useState<ChannelAsset[]>([
+    { id: "1", audienceName: "", channel: "", assetType: "", visibility: "external", owner: "", status: "planned" },
   ])
 
-  const addTactic = () => {
-    setTactics([
-      ...tactics,
-      { id: Date.now().toString(), channel: "", contentType: "", audience: "", timing: "", owner: "" },
+  const addAudience = () => {
+    setAudiences([
+      ...audiences,
+      { id: Date.now().toString(), name: "", persona: "", priority: audiences.length + 1, desiredAction: "" },
     ])
   }
 
-  const removeTactic = (id: string) => {
-    if (tactics.length > 1) {
-      setTactics(tactics.filter((t) => t.id !== id))
+  const removeAudience = (id: string) => {
+    if (audiences.length > 1) {
+      setAudiences(audiences.filter((a) => a.id !== id))
+    }
+  }
+
+  const addChannelAsset = () => {
+    setChannelAssets([
+      ...channelAssets,
+      {
+        id: Date.now().toString(),
+        audienceName: "",
+        channel: "",
+        assetType: "",
+        visibility: "external",
+        owner: "",
+        status: "planned",
+      },
+    ])
+  }
+
+  const removeChannelAsset = (id: string) => {
+    if (channelAssets.length > 1) {
+      setChannelAssets(channelAssets.filter((a) => a.id !== id))
     }
   }
 
   return (
     <div className="space-y-6">
-      {/* Basic Information */}
+      {/* Launch Context (Inherited) */}
       <Card>
         <CardHeader>
-          <CardTitle>Campaign Overview</CardTitle>
-          <CardDescription>Define the campaign you're launching and link to foundational strategy</CardDescription>
+          <CardTitle>Launch Context</CardTitle>
+          <CardDescription>Inherited from GTM Planning (read-only)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              These fields are inherited from your GTM Planning framework and cannot be edited here.
+            </AlertDescription>
+          </Alert>
+
           <div className="space-y-2">
-            <Label htmlFor="title">Communications Plan Title*</Label>
-            <Input id="title" placeholder="e.g., Q2 Product Launch Communications Plan" />
+            <Label htmlFor="gtm-brief-link">Link to GTM Brief*</Label>
+            <Input id="gtm-brief-link" type="url" placeholder="Select or link to your GTM Brief..." />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4 opacity-60 pointer-events-none">
             <div className="space-y-2">
-              <Label htmlFor="campaign-type">Campaign Type*</Label>
-              <Select>
-                <SelectTrigger id="campaign-type">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="product-launch">Product Launch</SelectItem>
-                  <SelectItem value="feature-release">Feature Release</SelectItem>
-                  <SelectItem value="company-announcement">Company Announcement</SelectItem>
-                  <SelectItem value="event">Event</SelectItem>
-                  <SelectItem value="campaign">Marketing Campaign</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label>Launch Name</Label>
+              <Input value="Q2 Product Launch" disabled />
             </div>
 
             <div className="space-y-2">
-              <Label>Launch Date*</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn("w-full justify-start text-left font-normal", !launchDate && "text-muted-foreground")}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {launchDate ? format(launchDate, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar mode="single" selected={launchDate} onSelect={setLaunchDate} initialFocus />
-                </PopoverContent>
-              </Popover>
+              <Label>Product / Feature</Label>
+              <Input value="AI-Powered Analytics" disabled />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Launch Type</Label>
+              <Input value="New Product Launch" disabled />
+            </div>
+
+            <div className="space-y-2">
+              <Label>GTM Motion</Label>
+              <Input value="Product-Led Growth" disabled />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="overview">Campaign Overview*</Label>
-            <Textarea id="overview" placeholder="Brief description of what you're launching..." rows={3} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="gtm-brief-link">Link to GTM Brief/Strategy</Label>
-            <Input id="gtm-brief-link" type="url" placeholder="Link to your GTM Brief or Strategy document..." />
+          <div className="space-y-2 opacity-60 pointer-events-none">
+            <Label>Business Objective</Label>
+            <Textarea value="Drive 500 qualified leads and $2M pipeline" disabled rows={2} />
           </div>
         </CardContent>
       </Card>
 
-      {/* Core Messaging */}
+      {/* Primary Goal */}
       <Card>
         <CardHeader>
-          <CardTitle>Core Messaging</CardTitle>
-          <CardDescription>Reference your messaging framework and define key narratives</CardDescription>
+          <CardTitle>Primary Goal</CardTitle>
+          <CardDescription>Select ONE primary goal for this communications plan</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="messaging-framework-link">Link to Messaging Framework</Label>
-            <Input
-              id="messaging-framework-link"
-              type="url"
-              placeholder="Link to Messaging House, Tone of Voice Guide, etc..."
-            />
+          <div className="space-y-3">
+            <Label>Select Your Primary Goal*</Label>
+            <RadioGroup value={primaryGoal} onValueChange={setPrimaryGoal}>
+              <div className="flex items-start space-x-3 space-y-0 p-3 border rounded-lg">
+                <RadioGroupItem value="awareness" id="awareness" />
+                <div className="space-y-1 leading-none">
+                  <Label htmlFor="awareness" className="font-medium cursor-pointer">
+                    Awareness
+                  </Label>
+                  <p className="text-sm text-muted-foreground">Make people know this exists</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 space-y-0 p-3 border rounded-lg">
+                <RadioGroupItem value="understanding" id="understanding" />
+                <div className="space-y-1 leading-none">
+                  <Label htmlFor="understanding" className="font-medium cursor-pointer">
+                    Understanding
+                  </Label>
+                  <p className="text-sm text-muted-foreground">Help people grasp what it does and why it matters</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 space-y-0 p-3 border rounded-lg">
+                <RadioGroupItem value="adoption" id="adoption" />
+                <div className="space-y-1 leading-none">
+                  <Label htmlFor="adoption" className="font-medium cursor-pointer">
+                    Adoption
+                  </Label>
+                  <p className="text-sm text-muted-foreground">Drive signups, trials, purchases, or active usage</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 space-y-0 p-3 border rounded-lg">
+                <RadioGroupItem value="enablement" id="enablement" />
+                <div className="space-y-1 leading-none">
+                  <Label htmlFor="enablement" className="font-medium cursor-pointer">
+                    Enablement
+                  </Label>
+                  <p className="text-sm text-muted-foreground">Equip internal teams to sell, support, or advocate</p>
+                </div>
+              </div>
+            </RadioGroup>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="headline">Primary Launch Headline*</Label>
-            <Input id="headline" placeholder="e.g., Introducing AI-Powered Insights for Enterprise Teams" />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="key-messages">Key Messages (3-5)*</Label>
-            <Textarea
-              id="key-messages"
-              placeholder="List the core messages that should appear across all communications..."
-              rows={5}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="narrative">Narrative Arc</Label>
-            <Textarea
-              id="narrative"
-              placeholder="Describe the story you're telling: problem, solution, outcome..."
-              rows={4}
-            />
+            <Label htmlFor="success-looks-like">Success looks like...*</Label>
+            <Input id="success-looks-like" placeholder="One sentence describing what success means for this goal" />
+            <p className="text-xs text-muted-foreground">
+              Be specific. Example: "Sales can confidently position the new feature in discovery calls"
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -147,242 +187,375 @@ export function GTMCommunicationsPlanForm() {
       {/* Target Audiences */}
       <Card>
         <CardHeader>
-          <CardTitle>Target Audiences</CardTitle>
-          <CardDescription>Define who you're communicating with and tailor messaging</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="internal-audiences">Internal Audiences*</Label>
-            <Textarea
-              id="internal-audiences"
-              placeholder="List internal stakeholders (e.g., Sales, CS, Engineering, Executives)..."
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="external-audiences">External Audiences*</Label>
-            <Textarea
-              id="external-audiences"
-              placeholder="List external audiences (e.g., Customers, Prospects, Press, Partners)..."
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="audience-segmentation">Audience-Specific Messaging</Label>
-            <Textarea
-              id="audience-segmentation"
-              placeholder="How does messaging differ for each audience segment?"
-              rows={4}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Communication Channels */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Communication Channels</CardTitle>
-          <CardDescription>Identify all channels you'll use to reach your audiences</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="internal-channels">Internal Channels*</Label>
-            <Textarea
-              id="internal-channels"
-              placeholder="e.g., All-hands meeting, Slack announcement, Email, Internal blog..."
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="external-channels">External Channels*</Label>
-            <Textarea
-              id="external-channels"
-              placeholder="e.g., Email campaign, Blog post, Social media, Press release, Webinar..."
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="paid-channels">Paid/Amplification Channels</Label>
-            <Textarea
-              id="paid-channels"
-              placeholder="e.g., LinkedIn ads, Google Ads, Sponsored content, Influencer partnerships..."
-              rows={3}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Content & Tactics */}
-      <Card>
-        <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Content & Tactics</CardTitle>
-              <CardDescription>Map out specific content pieces and communication tactics</CardDescription>
+              <CardTitle>Target Audiences</CardTitle>
+              <CardDescription>Define priority audiences and their desired actions</CardDescription>
             </div>
-            <Button type="button" variant="outline" size="sm" onClick={addTactic}>
+            <Button type="button" variant="outline" size="sm" onClick={addAudience}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Tactic
+              Add Audience
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {tactics.map((tactic, index) => (
-            <div key={tactic.id} className="p-4 border rounded-lg space-y-4 relative">
-              {tactics.length > 1 && (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Each audience can have only ONE desired action to maintain clarity and focus.
+            </AlertDescription>
+          </Alert>
+
+          {audiences.map((audience, index) => (
+            <div key={audience.id} className="p-4 border rounded-lg space-y-4 relative">
+              {audiences.length > 1 && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   className="absolute top-2 right-2"
-                  onClick={() => removeTactic(tactic.id)}
+                  onClick={() => removeAudience(audience.id)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
               )}
 
-              <div className="font-medium text-sm text-muted-foreground">Tactic {index + 1}</div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Channel</Label>
-                  <Input placeholder="e.g., Email, Blog, Social, Press" />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Content Type</Label>
-                  <Input placeholder="e.g., Announcement, Tutorial, Case Study" />
-                </div>
-              </div>
+              <div className="font-medium text-sm">Audience {index + 1}</div>
 
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label>Target Audience</Label>
-                  <Input placeholder="e.g., Enterprise customers" />
+                  <Label>Audience Name*</Label>
+                  <Input placeholder="e.g., Enterprise Buyers" />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Timing</Label>
-                  <Input placeholder="e.g., L-7 days, Launch day" />
+                  <Label>Persona / Segment*</Label>
+                  <Input placeholder="e.g., VP Engineering" />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Owner</Label>
-                  <Input placeholder="e.g., PMM, Comms" />
+                  <Label>Priority Order*</Label>
+                  <Select defaultValue={audience.priority.toString()}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {audiences.map((_, i) => (
+                        <SelectItem key={i + 1} value={(i + 1).toString()}>
+                          {i + 1}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Desired Action (ONE only)*</Label>
+                <Input placeholder="e.g., Sign up for product demo" />
+                <p className="text-xs text-muted-foreground">
+                  What is the single most important action for this audience?
+                </p>
               </div>
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {/* Timeline & Sequencing */}
+      {/* Core Message (Message Spine) */}
       <Card>
         <CardHeader>
-          <CardTitle>Timeline & Sequencing</CardTitle>
-          <CardDescription>Define the communication timeline and critical milestones</CardDescription>
+          <CardTitle>Core Message (Message Spine)</CardTitle>
+          <CardDescription>Define the single most important message that drives all communications</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="pre-launch">Pre-Launch Activities (L-30 to L-1)</Label>
+            <Label htmlFor="smit">Single Most Important Takeaway (SMIT)*</Label>
+            <Textarea id="smit" placeholder="The one thing you want every audience to remember..." rows={2} />
+            <p className="text-xs text-muted-foreground">
+              This SMIT will be referenced across all downstream assets to ensure message consistency.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="benefits">2–3 Value-Led Benefits*</Label>
+            <Textarea
+              id="benefits"
+              placeholder="List benefits before features. Focus on outcomes, not capabilities."
+              rows={4}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="primary-cta">Primary Call-to-Action*</Label>
+            <Input id="primary-cta" placeholder="e.g., Start your free trial" />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="proof-points">Supporting Proof Points</Label>
+            <Textarea
+              id="proof-points"
+              placeholder="Statistics, customer quotes, awards, third-party validation..."
+              rows={3}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="objections">Top Objections (Optional)</Label>
+            <Textarea id="objections" placeholder="Common concerns or objections and how to address them..." rows={3} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Channel & Asset Plan */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Channel & Asset Plan</CardTitle>
+              <CardDescription>Map channels and assets to target audiences</CardDescription>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={addChannelAsset}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Asset
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Every asset must map to an audience and have an assigned owner before shipping.
+            </AlertDescription>
+          </Alert>
+
+          {channelAssets.map((asset, index) => (
+            <div key={asset.id} className="p-4 border rounded-lg space-y-4 relative">
+              {channelAssets.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-2 right-2"
+                  onClick={() => removeChannelAsset(asset.id)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+
+              <div className="font-medium text-sm text-muted-foreground">Asset {index + 1}</div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Target Audience*</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select audience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="enterprise">Enterprise Buyers</SelectItem>
+                      <SelectItem value="smb">SMB Decision Makers</SelectItem>
+                      <SelectItem value="existing">Existing Customers</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Channel*</Label>
+                  <Input placeholder="e.g., Email, Blog, LinkedIn" />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Asset Type*</Label>
+                  <Input placeholder="e.g., Launch Email, Demo Video" />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Visibility*</Label>
+                  <Select defaultValue={asset.visibility}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="internal">Internal</SelectItem>
+                      <SelectItem value="external">External</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Status*</Label>
+                  <Select defaultValue={asset.status}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="planned">Planned</SelectItem>
+                      <SelectItem value="in-progress">In Progress</SelectItem>
+                      <SelectItem value="review">In Review</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="shipped">Shipped</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Owner*</Label>
+                <Input placeholder="Who is responsible for creating and shipping this asset?" />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Timeline & Phases */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Timeline & Phases</CardTitle>
+          <CardDescription>Plan communication across pre-launch, launch, and post-launch phases</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="pre-launch">Pre-Launch Phase</Label>
             <Textarea
               id="pre-launch"
-              placeholder="Internal prep, teaser campaigns, media briefings, beta communications..."
-              rows={4}
+              placeholder="Internal prep, soft announcements, teaser campaigns, beta communications..."
+              rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="launch-day">Launch Day Activities</Label>
+            <Label htmlFor="launch">Launch Phase</Label>
             <Textarea
-              id="launch-day"
-              placeholder="Press release, blog post, email blast, social posts, all-hands announcement..."
-              rows={4}
+              id="launch"
+              placeholder="Main announcement, press release, coordinated outreach, launch events..."
+              rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="post-launch">Post-Launch Activities (L+1 to L+30)</Label>
+            <Label htmlFor="post-launch">Post-Launch Phase*</Label>
             <Textarea
               id="post-launch"
-              placeholder="Follow-up content, customer stories, webinars, ongoing promotion..."
-              rows={4}
+              placeholder="Reinforcement campaigns, customer stories, ongoing education, feedback loops..."
+              rows={3}
             />
+            <p className="text-xs text-muted-foreground">
+              Post-launch phase is required to ensure sustained impact and message reinforcement.
+            </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Stakeholder Management */}
+      {/* Internal Enablement Notes */}
       <Card>
         <CardHeader>
-          <CardTitle>Stakeholder Management</CardTitle>
-          <CardDescription>Coordinate approvals and communication with key stakeholders</CardDescription>
+          <CardTitle>Internal Enablement Notes</CardTitle>
+          <CardDescription>Equip internal teams with clear, actionable context</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>Write for frontline teams (Sales, CS, Support), not marketers.</AlertDescription>
+          </Alert>
+
           <div className="space-y-2">
-            <Label htmlFor="approval-chain">Approval Chain*</Label>
+            <Label htmlFor="sales-explanation">One-Sentence Explanation for Sales*</Label>
+            <Input id="sales-explanation" placeholder="How would a sales rep explain this in 10 seconds?" />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="what-changed">What Changed vs. Before</Label>
             <Textarea
-              id="approval-chain"
-              placeholder="Who needs to approve what? (e.g., Legal for press release, CEO for investor comms)"
+              id="what-changed"
+              placeholder="Help teams understand what's new, what's different, and why it matters..."
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="key-stakeholders">Key Stakeholders</Label>
-            <Textarea
-              id="key-stakeholders"
-              placeholder="List stakeholders who need to be informed or consulted..."
-              rows={3}
-            />
+            <Label htmlFor="for-not-for">Who It's For / Not For</Label>
+            <Textarea id="for-not-for" placeholder="Help teams quickly qualify the right fit..." rows={2} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="executive-talking-points">Executive Talking Points</Label>
-            <Textarea
-              id="executive-talking-points"
-              placeholder="Key talking points for executives and spokespeople..."
-              rows={4}
-            />
+            <Label htmlFor="questions-go">Where Questions Go</Label>
+            <Input id="questions-go" placeholder="e.g., #product-launch-q2 Slack channel" />
           </div>
         </CardContent>
       </Card>
 
-      {/* Measurement & Success */}
+      {/* Metrics & Feedback */}
       <Card>
         <CardHeader>
-          <CardTitle>Measurement & Success Criteria</CardTitle>
-          <CardDescription>Define how you'll measure the success of your communications</CardDescription>
+          <CardTitle>Metrics & Feedback</CardTitle>
+          <CardDescription>Define how you'll measure success and gather feedback</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="kpis">Key Performance Indicators*</Label>
+            <Label htmlFor="primary-metric">Primary Metric (tied to your goal)*</Label>
+            <Input id="primary-metric" placeholder="e.g., 500 demo requests (if goal is Adoption)" />
+            <p className="text-xs text-muted-foreground">
+              This metric must directly map to your selected primary goal above.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="secondary-metrics">Secondary Metrics</Label>
             <Textarea
-              id="kpis"
-              placeholder="e.g., Media mentions, email open rates, social engagement, website traffic..."
+              id="secondary-metrics"
+              placeholder="Other metrics to track (e.g., email open rates, social engagement, press mentions)..."
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="success-metrics">Success Metrics & Targets</Label>
+            <Label htmlFor="feedback-sources">Qualitative Feedback Sources</Label>
             <Textarea
-              id="success-metrics"
-              placeholder="Specific targets for each KPI (e.g., 50 media mentions, 40% email open rate)..."
+              id="feedback-sources"
+              placeholder="Where will you gather qualitative feedback? (e.g., Sales calls, customer interviews, surveys)"
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="reporting-plan">Reporting Plan</Label>
+            <Label htmlFor="review-date">Review Date*</Label>
+            <Input id="review-date" type="date" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Ownership */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Ownership</CardTitle>
+          <CardDescription>Define who's responsible for the overall plan</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>No communications plan can ship without a designated overall owner.</AlertDescription>
+          </Alert>
+
+          <div className="space-y-2">
+            <Label htmlFor="overall-owner">Overall Owner*</Label>
+            <Input id="overall-owner" placeholder="Who is accountable for this communications plan?" />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="contributors">Contributors</Label>
+            <Textarea id="contributors" placeholder="List team members contributing to execution..." rows={2} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="reviewers">Reviewers / Approvers (Optional)</Label>
             <Textarea
-              id="reporting-plan"
-              placeholder="How and when will you report on results? Who receives updates?"
-              rows={3}
+              id="reviewers"
+              placeholder="Who needs to review or approve before launch? (e.g., Legal, Exec team)"
+              rows={2}
             />
           </div>
         </CardContent>
