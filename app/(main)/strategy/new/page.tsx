@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Target, MessageSquare, Rocket } from "lucide-react"
+import { Users, Target, MessageSquare, Rocket, Sparkles } from "lucide-react"
 import Link from "next/link"
 
 export default function NewStrategyPage() {
@@ -12,6 +12,32 @@ export default function NewStrategyPage() {
         <p className="text-muted-foreground text-sm">
           Pick a framework to shape your positioning, messaging, or GTM plan.
         </p>
+      </div>
+
+      <Link href="/strategy/new/ai-guided">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-primary/50 bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              AI-Guided Strategy Builder
+              <span className="ml-auto text-xs font-normal bg-primary/20 text-primary px-2 py-1 rounded-full">
+                Recommended
+              </span>
+            </CardTitle>
+            <CardDescription>An AI-assisted conversation that guides you through the right questions</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Turn structured conversations into clear, actionable strategy for audience, positioning, messaging, and
+              GTM.
+            </p>
+          </CardContent>
+        </Card>
+      </Link>
+
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold">Or choose a specific framework</h2>
+        <p className="text-xs text-muted-foreground">Start with a template if you prefer a structured form</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
