@@ -218,7 +218,9 @@ export default function AIGuidedStrategyClient() {
                 <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[80%] rounded-lg p-4 ${
-                      message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted/50 border border-border"
                     }`}
                   >
                     {message.stage && message.role === "assistant" && (
