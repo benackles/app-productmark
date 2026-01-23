@@ -1,114 +1,131 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Target, MessageSquare, Rocket, Sparkles } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Building2, User, Target, MessageSquare, Rocket, Megaphone, Mic2 } from "lucide-react"
 import Link from "next/link"
 
-export default function NewStrategyPage() {
-  console.log("[v0] NewStrategyPage rendering")
+const frameworks = [
+  {
+    id: "icp",
+    name: "Ideal Customer Profile",
+    description: "Define the companies that are the best fit for your product",
+    category: "Target Audience",
+    icon: Building2,
+    href: "/strategy/new/build?framework=icp",
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
+  },
+  {
+    id: "persona",
+    name: "Buyer Persona",
+    description: "Document the individuals who buy and use your product",
+    category: "Target Audience",
+    icon: User,
+    href: "/strategy/new/build?framework=persona",
+    color: "text-violet-600",
+    bgColor: "bg-violet-50",
+  },
+  {
+    id: "positioning",
+    name: "Positioning Canvas",
+    description: "Capture what makes your product different and why it matters",
+    category: "Positioning",
+    icon: Target,
+    href: "/strategy/new/build?framework=positioning",
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-50",
+  },
+  {
+    id: "messaging-house",
+    name: "Messaging House",
+    description: "Build a hierarchy of value, benefit, and feature messages",
+    category: "Messaging",
+    icon: MessageSquare,
+    href: "/strategy/new/build?framework=messaging-house",
+    color: "text-orange-600",
+    bgColor: "bg-orange-50",
+  },
+  {
+    id: "sales-pitch",
+    name: "Sales Pitch Narrative",
+    description: "Craft a compelling story that moves prospects to action",
+    category: "Messaging",
+    icon: Mic2,
+    href: "/strategy/new/build?framework=sales-pitch",
+    color: "text-rose-600",
+    bgColor: "bg-rose-50",
+  },
+  {
+    id: "launch",
+    name: "Launch Framework",
+    description: "Plan and execute a product or feature launch",
+    category: "GTM Planning",
+    icon: Rocket,
+    href: "/strategy/new/build?framework=launch",
+    color: "text-indigo-600",
+    bgColor: "bg-indigo-50",
+  },
+  {
+    id: "campaign",
+    name: "Campaign Plan",
+    description: "Structure a marketing campaign with clear goals and tactics",
+    category: "GTM Planning",
+    icon: Megaphone,
+    href: "/strategy/new/build?framework=campaign",
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
+  },
+]
 
+const categories = ["Target Audience", "Positioning", "Messaging", "GTM Planning"]
+
+export default function NewStrategyPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Create Strategic Framework</h1>
-        <p className="text-muted-foreground text-sm">
-          Pick a framework to shape your positioning, messaging, or GTM plan.
+        <h1 className="text-3xl font-bold tracking-tight">Build a Strategic Framework</h1>
+        <p className="text-muted-foreground max-w-2xl text-balance">
+          Select a framework to start a guided conversation. Answer questions, capture reasoning, and progressively lock
+          in decisions that shape your strategy.
         </p>
       </div>
 
-      <Link href="/strategy/new/ai-guided">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-primary/50 bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              AI-Guided Strategy Builder
-              <span className="ml-auto text-xs font-normal bg-primary/20 text-primary px-2 py-1 rounded-full">
-                Recommended
-              </span>
-            </CardTitle>
-            <CardDescription>An AI-assisted conversation that guides you through the right questions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Turn structured conversations into clear, actionable strategy for audience, positioning, messaging, and
-              GTM.
-            </p>
-          </CardContent>
-        </Card>
-      </Link>
-
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Or choose a specific framework</h2>
-        <p className="text-xs text-muted-foreground">Start with a template if you prefer a structured form</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Link href="/strategy/new/target-audience">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                Target Audience
-              </CardTitle>
-              <CardDescription>Define ideal customer profiles and buyer personas</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Identify and document the companies and individuals who are the best fit for your product.
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/strategy/new/positioning">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
-                Positioning
-              </CardTitle>
-              <CardDescription>Establish your unique value and competitive differentiation</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Use the Positioning Canvas to capture what makes your product different and why it matters.
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/strategy/new/messaging">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-primary" />
-                Messaging
-              </CardTitle>
-              <CardDescription>Craft compelling narratives and value propositions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Create messaging houses and sales pitch narratives that resonate with your audience.
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/strategy/new/gtm-planning">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Rocket className="h-5 w-5 text-primary" />
-                GTM Planning
-              </CardTitle>
-              <CardDescription>Plan go-to-market strategy and execution roadmap</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Build launch frameworks or campaign plans with task boards and RACI assignments.
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-      </div>
+      {categories.map((category) => {
+        const categoryFrameworks = frameworks.filter((f) => f.category === category)
+        return (
+          <div key={category} className="space-y-4">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">{category}</h2>
+              <Badge variant="secondary" className="text-xs">
+                {categoryFrameworks.length}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categoryFrameworks.map((framework) => {
+                const Icon = framework.icon
+                return (
+                  <Link key={framework.id} href={framework.href}>
+                    <Card className="hover:shadow-md hover:border-primary/30 transition-all cursor-pointer h-full group">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start gap-3">
+                          <div className={`p-2 rounded-lg ${framework.bgColor} group-hover:scale-105 transition-transform`}>
+                            <Icon className={`h-5 w-5 ${framework.color}`} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <CardTitle className="text-base">{framework.name}</CardTitle>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <CardDescription className="text-sm">{framework.description}</CardDescription>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
