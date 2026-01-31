@@ -1,13 +1,14 @@
-"use client"
+'use client'
 
-import { useState, useRef, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
+import { useState, useRef, useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   ArrowLeft,
   Send,
@@ -15,7 +16,8 @@ import {
   Circle,
   Lock,
   Edit2,
-  Save,
+  LockOpen,
+  ChevronRight,
   Building2,
   User,
   Target,
@@ -24,1042 +26,626 @@ import {
   Megaphone,
   Mic2,
   Loader2,
-} from "lucide-react"
-import Link from "next/link"
+  AlertCircle,
+} from 'lucide-react'
+import Link from 'next/link'
 
-// Framework definitions with their conversation stages
+interface Message {
+  id: string
+  type: 'agent' | 'user'
+  content: string
+  stage?: string
+  field?: string
+  locked?: boolean
+}
+
+interface LockedDecision {
+  field: string
+  value: string
+  reasoning: string
+  stage: string
+  lockedAt: Date
+}
+
+// Framework configurations
 const frameworkConfigs = {
   icp: {
-    name: "Ideal Customer Profile",
+    name: 'Ideal Customer Profile',
     icon: Building2,
-    color: "text-blue-600",
-    bgColor: "bg-blue-50",
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
+    description: 'Define the companies that are the best fit',
     stages: [
       {
-        id: "basics",
-        label: "Basics",
+        id: 'basics',
+        label: 'Basics',
+        intro:
+          "Let's start with the fundamentals. I need to understand who we're talking about and why this matters.",
         questions: [
           {
-            id: "name",
-            question: "What would you like to call this ICP? Give it a name that helps you recognize it later.",
-            field: "name",
+            id: 'name',
+            question:
+              'What would you like to call this ICP? Give it a name that helps you recognize it later.',
+            field: 'name',
             required: true,
+            hint: 'Example: "Enterprise SaaS with 500+ employees"',
           },
           {
-            id: "context",
+            id: 'context',
             question:
-              "Before we dive in, tell me a bit about why you're defining this ICP now. What's the context or goal?",
-            field: "context",
+              'Before we dive deeper, tell me why you\'re defining this ICP right now. What\'s the business context or goal?',
+            field: 'context',
+            hint: 'Are you launching a new product, expanding into a new market, or refocusing sales?',
           },
         ],
       },
       {
-        id: "firmographics",
-        label: "Firmographics",
+        id: 'firmographics',
+        label: 'Firmographics',
+        intro: 'Now let\'s get specific about the characteristics of these companies.',
         questions: [
           {
-            id: "company-size",
+            id: 'company-size',
             question:
-              "What size companies are you targeting? Think about employee count, revenue, or other size indicators that matter.",
-            field: "companySize",
+              'What size companies are you targeting? Think about employee count, revenue, or ARR.',
+            field: 'companySize',
+            required: true,
+            hint: 'Be specific: "1000-5000 employees" or "$50M-$500M revenue"',
           },
           {
-            id: "industries",
+            id: 'industries',
             question:
-              "What industries or verticals are the best fit? Be specific about which ones and why they're a good match.",
-            field: "industries",
+              'What industries or verticals are the best fit? Why those specifically?',
+            field: 'industries',
+            required: true,
+            hint: 'List industries and briefly explain why they\'re good matches.',
           },
           {
-            id: "geography",
-            question: "Are there geographic constraints? Where are these companies located?",
-            field: "geography",
+            id: 'geography',
+            question: 'Are there geographic constraints? Where do these companies operate?',
+            field: 'geography',
           },
         ],
       },
       {
-        id: "characteristics",
-        label: "Characteristics",
+        id: 'pain-points',
+        label: 'Pain Points & Needs',
+        intro:
+          'Understanding their pain points helps us understand if we\'re truly a fit.',
         questions: [
           {
-            id: "business-model",
+            id: 'challenges',
             question:
-              "What business model do these companies typically have? (e.g., B2B, B2C, SaaS, services, etc.)",
-            field: "businessModel",
+              'What are the 2-3 biggest business challenges these companies face that your product can address?',
+            field: 'painPoints',
+            required: true,
+            hint: 'Go deeper than surface-level. What keeps their CFO/CTO up at night?',
           },
           {
-            id: "tech-stack",
-            question:
-              "What technologies or platforms do they typically use? What's their technical environment like?",
-            field: "techStack",
-          },
-          {
-            id: "maturity",
-            question: "What stage are these companies at? (e.g., startup, growth, enterprise, etc.)",
-            field: "maturity",
+            id: 'needs',
+            question: 'What are they trying to achieve? What does success look like for them?',
+            field: 'needs',
+            required: true,
+            hint: 'Frame this in their terms, not your features.',
           },
         ],
       },
       {
-        id: "pain-points",
-        label: "Pain Points",
+        id: 'qualification',
+        label: 'Qualification Criteria',
+        intro:
+          'Now let\'s define what makes someone in this ICP a fit—and what disqualifies them.',
         questions: [
           {
-            id: "challenges",
+            id: 'must-haves',
             question:
-              "What are the key challenges or pain points these companies face that your product addresses?",
-            field: "painPoints",
+              'What are the must-have characteristics? If they don\'t have these, they\'re not a good fit.',
+            field: 'mustHaves',
+            required: true,
+            hint: 'These are your non-negotiables.',
           },
           {
-            id: "needs",
-            question: "What are they trying to achieve? What does success look like for them?",
-            field: "needs",
-          },
-        ],
-      },
-      {
-        id: "qualification",
-        label: "Qualification",
-        questions: [
-          {
-            id: "disqualifiers",
+            id: 'disqualifiers',
             question:
-              "What would disqualify a company from being a good fit? What are the red flags or deal breakers?",
-            field: "disqualifiers",
-          },
-          {
-            id: "ideal-signals",
-            question:
-              "What signals indicate a company is a great fit? What makes you excited when you see it?",
-            field: "idealSignals",
+              'What would disqualify a company from being a good fit? What are your deal breakers?',
+            field: 'disqualifiers',
+            hint: 'Examples: "Already working with a competitor", "No budget for tools"',
           },
         ],
       },
     ],
   },
   persona: {
-    name: "Buyer Persona",
+    name: 'Buyer Persona',
     icon: User,
-    color: "text-violet-600",
-    bgColor: "bg-violet-50",
+    color: 'text-violet-600',
+    bgColor: 'bg-violet-50',
+    description: 'Document the individuals who buy your product',
     stages: [
       {
-        id: "basics",
-        label: "Basics",
+        id: 'basics',
+        label: 'Basics',
+        intro: "Let's create a clear picture of this buyer persona.",
         questions: [
           {
-            id: "name",
-            question: "What's the name or title for this persona? (e.g., 'The Technical Evaluator')",
-            field: "name",
+            id: 'name',
+            question: 'What\'s a name or title for this persona? (e.g., "The Technical Evaluator")',
+            field: 'name',
+            required: true,
+            hint: 'Make it memorable and descriptive.',
+          },
+          {
+            id: 'role',
+            question:
+              'What\'s their job title and function in the organization? What department?',
+            field: 'role',
+            required: true,
+          },
+        ],
+      },
+      {
+        id: 'responsibilities',
+        label: 'Role & Responsibilities',
+        intro: 'Now I need to understand what they actually do day-to-day.',
+        questions: [
+          {
+            id: 'daily-work',
+            question:
+              'What does their day-to-day look like? What are their main responsibilities?',
+            field: 'dailyWork',
+            required: true,
+            hint: 'Paint a picture of their typical week.',
+          },
+          {
+            id: 'success-metrics',
+            question:
+              'How is their success measured? What KPIs or outcomes do they own?',
+            field: 'successMetrics',
+            required: true,
+          },
+        ],
+      },
+      {
+        id: 'challenges',
+        label: 'Challenges & Goals',
+        intro: 'What keeps them from doing their job well? And what are they trying to achieve?',
+        questions: [
+          {
+            id: 'pain-points',
+            question: 'What are their biggest professional frustrations or challenges?',
+            field: 'painPoints',
             required: true,
           },
           {
-            id: "role",
-            question: "What's their job title and department? Where do they sit in the organization?",
-            field: "role",
+            id: 'goals',
+            question: 'What are they trying to achieve in the next 6-12 months?',
+            field: 'goals',
+            required: true,
           },
         ],
       },
       {
-        id: "responsibilities",
-        label: "Responsibilities",
+        id: 'buying-behavior',
+        label: 'Buying Behavior',
+        intro: 'Finally, how do they approach purchasing decisions?',
         questions: [
           {
-            id: "daily-work",
-            question: "What does their day-to-day work look like? What are they responsible for?",
-            field: "dailyWork",
-          },
-          {
-            id: "success-metrics",
-            question: "How is their success measured? What KPIs or outcomes do they care about?",
-            field: "successMetrics",
-          },
-        ],
-      },
-      {
-        id: "challenges",
-        label: "Challenges",
-        questions: [
-          {
-            id: "pain-points",
-            question: "What are their biggest professional frustrations or challenges?",
-            field: "painPoints",
-          },
-          {
-            id: "obstacles",
-            question: "What obstacles prevent them from achieving their goals?",
-            field: "obstacles",
-          },
-        ],
-      },
-      {
-        id: "buying-behavior",
-        label: "Buying Behavior",
-        questions: [
-          {
-            id: "decision-role",
+            id: 'decision-role',
             question:
-              "What role do they play in purchasing decisions? (decision-maker, influencer, evaluator, user)",
-            field: "decisionRole",
+              'What role do they play in purchasing decisions? (decision-maker, influencer, evaluator, user, blocker)',
+            field: 'decisionRole',
+            required: true,
           },
           {
-            id: "research-habits",
-            question: "How do they research solutions? Where do they go for information?",
-            field: "researchHabits",
+            id: 'research-habits',
+            question:
+              'How do they research solutions? Where do they get information?',
+            field: 'researchHabits',
           },
           {
-            id: "objections",
-            question: "What objections or concerns do they typically raise during the buying process?",
-            field: "objections",
+            id: 'objections',
+            question:
+              'What concerns or objections do they typically raise?',
+            field: 'objections',
           },
         ],
       },
     ],
   },
   positioning: {
-    name: "Positioning Canvas",
+    name: 'Positioning Canvas',
     icon: Target,
-    color: "text-emerald-600",
-    bgColor: "bg-emerald-50",
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-50',
+    description: 'Define what makes you different and why it matters',
     stages: [
       {
-        id: "basics",
-        label: "Basics",
+        id: 'basics',
+        label: 'The Basics',
+        intro: 'Let\'s start with the fundamentals of your positioning.',
         questions: [
           {
-            id: "name",
-            question: "What would you like to call this positioning canvas?",
-            field: "name",
+            id: 'name',
+            question: 'What would you call this positioning canvas?',
+            field: 'name',
+            required: true,
+            hint: 'Something that describes what you\'re positioning (product, solution, feature)',
+          },
+          {
+            id: 'product',
+            question: 'Give me a brief description of what you\'re positioning.',
+            field: 'product',
+            required: true,
+          },
+        ],
+      },
+      {
+        id: 'alternatives',
+        label: 'The Market Context',
+        intro:
+          'To be different, we need to understand what alternatives exist in your customer\'s mind.',
+        questions: [
+          {
+            id: 'alternatives',
+            question:
+              'What would customers use if your product didn\'t exist? List competitors, substitutes, and the status quo.',
+            field: 'alternatives',
+            required: true,
+            hint: 'Include non-obvious alternatives like "doing nothing" or manual processes.',
+          },
+        ],
+      },
+      {
+        id: 'differentiation',
+        label: 'Your Differentiation',
+        intro: 'Now let\'s lock in what makes you genuinely different.',
+        questions: [
+          {
+            id: 'attributes',
+            question:
+              'What features, capabilities, or characteristics do you have that alternatives lack?',
+            field: 'attributes',
+            required: true,
+            hint: 'Focus on what\'s genuinely different, not just better.',
+          },
+          {
+            id: 'value',
+            question:
+              'What business value do these attributes create? What outcomes do they enable?',
+            field: 'value',
+            required: true,
+            hint: 'Translate features into outcomes customers care about.',
+          },
+          {
+            id: 'proof',
+            question:
+              'What proof do you have? Case studies, metrics, customer testimonials?',
+            field: 'proof',
+            required: true,
+          },
+        ],
+      },
+      {
+        id: 'targeting',
+        label: 'Target Market',
+        intro: 'Who cares most about this differentiation?',
+        questions: [
+          {
+            id: 'target-segment',
+            question:
+              'Who are the customers most likely to value your differentiation?',
+            field: 'targetSegment',
             required: true,
           },
           {
-            id: "product",
-            question: "What product or solution are we positioning? Give me a brief description.",
-            field: "product",
-          },
-        ],
-      },
-      {
-        id: "alternatives",
-        label: "Alternatives",
-        questions: [
-          {
-            id: "competitive-alternatives",
+            id: 'category',
             question:
-              "What would customers use if your product didn't exist? Include competitors, substitutes, and the status quo.",
-            field: "competitiveAlternatives",
-          },
-        ],
-      },
-      {
-        id: "differentiation",
-        label: "Differentiation",
-        questions: [
-          {
-            id: "unique-attributes",
-            question:
-              "What features or capabilities do you have that alternatives lack? What makes you genuinely different?",
-            field: "uniqueAttributes",
-          },
-          {
-            id: "value",
-            question:
-              "What value do those unique attributes create for customers? What business outcomes do they enable?",
-            field: "value",
-          },
-          {
-            id: "proof",
-            question:
-              "What proof do you have? Think case studies, metrics, testimonials, or other evidence.",
-            field: "proof",
-          },
-        ],
-      },
-      {
-        id: "market",
-        label: "Market",
-        questions: [
-          {
-            id: "target-market",
-            question: "Who cares most about this value? Describe the customers who find your differentiation most compelling.",
-            field: "targetMarket",
-          },
-          {
-            id: "market-category",
-            question:
-              "What market category should you compete in? The context that makes your strengths obvious.",
-            field: "marketCategory",
-          },
-          {
-            id: "trends",
-            question:
-              "What market trends make your product timely? What shifts make your solution more relevant now?",
-            field: "trends",
+              'What market category or framework should you compete in? This is the context that makes your strengths obvious.',
+            field: 'category',
+            required: true,
+            hint: 'Example: "The AI-native CRM" instead of just "CRM"',
           },
         ],
       },
     ],
   },
-  "messaging-house": {
-    name: "Messaging House",
-    icon: MessageSquare,
-    color: "text-orange-600",
-    bgColor: "bg-orange-50",
-    stages: [
-      {
-        id: "basics",
-        label: "Basics",
-        questions: [
-          {
-            id: "name",
-            question: "What's the name of this messaging house? (e.g., 'Q1 2024 Product Launch Messaging')",
-            field: "name",
-            required: true,
-          },
-          {
-            id: "audience",
-            question: "Who is the primary audience for this messaging?",
-            field: "audience",
-          },
-        ],
-      },
-      {
-        id: "core-message",
-        label: "Core Message",
-        questions: [
-          {
-            id: "overarching",
-            question:
-              "What's the overarching message? The single most important thing you want your audience to understand.",
-            field: "overarchingMessage",
-          },
-        ],
-      },
-      {
-        id: "pillar-1",
-        label: "Pillar 1",
-        questions: [
-          {
-            id: "pillar1-value",
-            question: "For your first messaging pillar, what's the VALUE? (The business outcome or result)",
-            field: "pillar1Value",
-          },
-          {
-            id: "pillar1-benefit",
-            question: "What's the BENEFIT? (How it improves their day-to-day work)",
-            field: "pillar1Benefit",
-          },
-          {
-            id: "pillar1-feature",
-            question: "What's the FEATURE? (The specific capability that makes it possible)",
-            field: "pillar1Feature",
-          },
-        ],
-      },
-      {
-        id: "pillar-2",
-        label: "Pillar 2",
-        questions: [
-          {
-            id: "pillar2-value",
-            question: "For your second messaging pillar, what's the VALUE?",
-            field: "pillar2Value",
-          },
-          {
-            id: "pillar2-benefit",
-            question: "What's the BENEFIT?",
-            field: "pillar2Benefit",
-          },
-          {
-            id: "pillar2-feature",
-            question: "What's the FEATURE?",
-            field: "pillar2Feature",
-          },
-        ],
-      },
-      {
-        id: "pillar-3",
-        label: "Pillar 3",
-        questions: [
-          {
-            id: "pillar3-value",
-            question: "For your third messaging pillar, what's the VALUE?",
-            field: "pillar3Value",
-          },
-          {
-            id: "pillar3-benefit",
-            question: "What's the BENEFIT?",
-            field: "pillar3Benefit",
-          },
-          {
-            id: "pillar3-feature",
-            question: "What's the FEATURE?",
-            field: "pillar3Feature",
-          },
-        ],
-      },
-    ],
-  },
-  "sales-pitch": {
-    name: "Sales Pitch Narrative",
-    icon: Mic2,
-    color: "text-rose-600",
-    bgColor: "bg-rose-50",
-    stages: [
-      {
-        id: "basics",
-        label: "Basics",
-        questions: [
-          {
-            id: "name",
-            question: "What's the name for this sales pitch?",
-            field: "name",
-            required: true,
-          },
-          {
-            id: "target",
-            question: "Who is this pitch designed for? What persona or audience?",
-            field: "targetAudience",
-          },
-        ],
-      },
-      {
-        id: "hook",
-        label: "Hook",
-        questions: [
-          {
-            id: "opening",
-            question:
-              "What's the opening hook? How do you grab attention in the first 30 seconds?",
-            field: "openingHook",
-          },
-          {
-            id: "problem",
-            question: "What problem are you highlighting? What's the pain your audience feels?",
-            field: "problemStatement",
-          },
-        ],
-      },
-      {
-        id: "solution",
-        label: "Solution",
-        questions: [
-          {
-            id: "solution",
-            question: "How do you present your solution? What's the transformation you offer?",
-            field: "solution",
-          },
-          {
-            id: "differentiation",
-            question: "Why you? What makes your approach different or better?",
-            field: "differentiation",
-          },
-        ],
-      },
-      {
-        id: "proof",
-        label: "Proof",
-        questions: [
-          {
-            id: "evidence",
-            question: "What proof points or stories demonstrate your value? Give specific examples.",
-            field: "proofPoints",
-          },
-        ],
-      },
-      {
-        id: "close",
-        label: "Close",
-        questions: [
-          {
-            id: "cta",
-            question: "What's the call to action? What do you want them to do next?",
-            field: "callToAction",
-          },
-        ],
-      },
-    ],
-  },
-  launch: {
-    name: "Launch Framework",
-    icon: Rocket,
-    color: "text-indigo-600",
-    bgColor: "bg-indigo-50",
-    stages: [
-      {
-        id: "basics",
-        label: "Basics",
-        questions: [
-          {
-            id: "name",
-            question: "What's the name of this launch?",
-            field: "name",
-            required: true,
-          },
-          {
-            id: "launch-date",
-            question: "When are you planning to launch? What's the target date?",
-            field: "launchDate",
-          },
-          {
-            id: "what",
-            question: "What exactly are you launching? Describe the product, feature, or update.",
-            field: "launchItem",
-          },
-        ],
-      },
-      {
-        id: "goals",
-        label: "Goals",
-        questions: [
-          {
-            id: "objectives",
-            question: "What are the primary objectives for this launch? What does success look like?",
-            field: "objectives",
-          },
-          {
-            id: "metrics",
-            question: "How will you measure success? What metrics matter most?",
-            field: "successMetrics",
-          },
-        ],
-      },
-      {
-        id: "audience",
-        label: "Audience",
-        questions: [
-          {
-            id: "target-audience",
-            question: "Who is the primary audience for this launch?",
-            field: "targetAudience",
-          },
-          {
-            id: "messaging",
-            question: "What's the core message you want to communicate?",
-            field: "coreMessage",
-          },
-        ],
-      },
-      {
-        id: "channels",
-        label: "Channels",
-        questions: [
-          {
-            id: "channels",
-            question: "What channels will you use to announce and promote the launch?",
-            field: "channels",
-          },
-          {
-            id: "content",
-            question: "What content or assets do you need to create?",
-            field: "contentNeeds",
-          },
-        ],
-      },
-      {
-        id: "stakeholders",
-        label: "Stakeholders",
-        questions: [
-          {
-            id: "stakeholders",
-            question: "Who are the key stakeholders? Who needs to be involved or informed?",
-            field: "stakeholders",
-          },
-          {
-            id: "risks",
-            question: "What are the biggest risks or dependencies? What could go wrong?",
-            field: "risks",
-          },
-        ],
-      },
-    ],
-  },
-  campaign: {
-    name: "Campaign Plan",
-    icon: Megaphone,
-    color: "text-amber-600",
-    bgColor: "bg-amber-50",
-    stages: [
-      {
-        id: "basics",
-        label: "Basics",
-        questions: [
-          {
-            id: "name",
-            question: "What's the name of this campaign?",
-            field: "name",
-            required: true,
-          },
-          {
-            id: "duration",
-            question: "What's the campaign timeframe? When does it start and end?",
-            field: "duration",
-          },
-        ],
-      },
-      {
-        id: "strategy",
-        label: "Strategy",
-        questions: [
-          {
-            id: "goal",
-            question: "What's the primary goal of this campaign?",
-            field: "goal",
-          },
-          {
-            id: "target",
-            question: "Who is the target audience?",
-            field: "targetAudience",
-          },
-          {
-            id: "message",
-            question: "What's the core campaign message or theme?",
-            field: "coreMessage",
-          },
-        ],
-      },
-      {
-        id: "tactics",
-        label: "Tactics",
-        questions: [
-          {
-            id: "channels",
-            question: "What channels will you activate? (email, social, paid, events, etc.)",
-            field: "channels",
-          },
-          {
-            id: "content",
-            question: "What content will you create? List the key assets.",
-            field: "contentPlan",
-          },
-        ],
-      },
-      {
-        id: "measurement",
-        label: "Measurement",
-        questions: [
-          {
-            id: "kpis",
-            question: "What KPIs will you track? How will you measure success?",
-            field: "kpis",
-          },
-          {
-            id: "budget",
-            question: "What's the budget? Any constraints to be aware of?",
-            field: "budget",
-          },
-        ],
-      },
-    ],
-  },
-}
-
-type FrameworkKey = keyof typeof frameworkConfigs
-
-type Message = {
-  id: string
-  role: "assistant" | "user"
-  content: string
-  stage?: string
-  field?: string
-}
-
-type LockedDecision = {
-  field: string
-  value: string
-  stage: string
-  locked: boolean
 }
 
 export function StrategyBuilderClient() {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const frameworkKey = (searchParams.get("framework") || "icp") as FrameworkKey
-  const framework = frameworkConfigs[frameworkKey]
+  const searchParams = useSearchParams()
+  const framework = (searchParams.get('framework') || 'icp') as keyof typeof frameworkConfigs
+  const config = frameworkConfigs[framework]
+  const Icon = config.icon
 
   const [currentStageIndex, setCurrentStageIndex] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [messages, setMessages] = useState<Message[]>([])
-  const [inputValue, setInputValue] = useState("")
-  const [decisions, setDecisions] = useState<Record<string, LockedDecision>>({})
-  const [completedStages, setCompletedStages] = useState<string[]>([])
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [editingField, setEditingField] = useState<string | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '0',
+      type: 'agent',
+      content: `Let's build a ${config.name}. ${config.stages[0].intro}`,
+      stage: config.stages[0].id,
+    },
+  ])
+  const [input, setInput] = useState('')
+  const [lockedDecisions, setLockedDecisions] = useState<LockedDecision[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
-  const currentStage = framework?.stages[currentStageIndex]
-  const currentQuestion = currentStage?.questions[currentQuestionIndex]
-  const Icon = framework?.icon || Building2
+  const currentStage = config.stages[currentStageIndex]
+  const currentQuestion = currentStage.questions[currentQuestionIndex]
+  const totalQuestions = config.stages.reduce((acc, stage) => acc + stage.questions.length, 0)
+  const answeredQuestions = lockedDecisions.length
 
-  // Initialize with first question
   useEffect(() => {
-    if (framework && messages.length === 0) {
-      const firstStage = framework.stages[0]
-      const firstQuestion = firstStage.questions[0]
-      setMessages([
-        {
-          id: "intro",
-          role: "assistant",
-          content: `Let's build your ${framework.name}. I'll guide you through a series of questions to capture your thinking and lock in clear decisions. You can always go back and edit later.\n\nLet's start with the basics.`,
-        },
-        {
-          id: "q1",
-          role: "assistant",
-          content: firstQuestion.question,
-          stage: firstStage.id,
-          field: firstQuestion.field,
-        },
-      ])
-    }
-  }, [framework, messages.length])
-
-  // Auto-scroll to latest message
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  if (!framework) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-        <p className="text-muted-foreground">Framework not found</p>
-        <Button asChild>
-          <Link href="/strategy/new">Choose a framework</Link>
-        </Button>
-      </div>
-    )
-  }
+  const handleSubmitAnswer = async () => {
+    if (!input.trim()) return
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim() || !currentQuestion || isProcessing) return
-
-    setIsProcessing(true)
+    setIsLoading(true)
 
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
-      role: "user",
-      content: inputValue,
+      type: 'user',
+      content: input,
       stage: currentStage.id,
       field: currentQuestion.field,
     }
-
     setMessages((prev) => [...prev, userMessage])
 
-    // Lock the decision
-    setDecisions((prev) => ({
-      ...prev,
-      [currentQuestion.field]: {
-        field: currentQuestion.field,
-        value: inputValue,
-        stage: currentStage.id,
-        locked: true,
-      },
-    }))
+    // Lock this decision
+    const decision: LockedDecision = {
+      field: currentQuestion.field,
+      value: input,
+      reasoning: input,
+      stage: currentStage.id,
+      lockedAt: new Date(),
+    }
+    setLockedDecisions((prev) => [...prev, decision])
 
-    setInputValue("")
+    // Clear input
+    setInput('')
 
-    // Determine next question
+    // Simulate agent processing
     setTimeout(() => {
-      const nextQuestionIndex = currentQuestionIndex + 1
+      const isLastQuestionInStage =
+        currentQuestionIndex === currentStage.questions.length - 1
+      const isLastStage = currentStageIndex === config.stages.length - 1
 
-      if (nextQuestionIndex < currentStage.questions.length) {
-        // More questions in current stage
-        const nextQuestion = currentStage.questions[nextQuestionIndex]
-        setCurrentQuestionIndex(nextQuestionIndex)
+      let responseContent = ''
+      let nextStage = currentStage
+      let nextQuestion = currentQuestion
 
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: "assistant",
-          content: nextQuestion.question,
-          stage: currentStage.id,
-          field: nextQuestion.field,
-        }
-        setMessages((prev) => [...prev, aiMessage])
-      } else {
-        // Stage complete
-        setCompletedStages((prev) => [...prev, currentStage.id])
-
-        const nextStageIndex = currentStageIndex + 1
-
-        if (nextStageIndex < framework.stages.length) {
-          // Move to next stage
-          const nextStage = framework.stages[nextStageIndex]
-          const nextQuestion = nextStage.questions[0]
-
-          setCurrentStageIndex(nextStageIndex)
-          setCurrentQuestionIndex(0)
-
-          const transitionMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: "assistant",
-            content: `Great, that's ${currentStage.label} locked in. Let's move on to ${nextStage.label}.`,
-            stage: nextStage.id,
-          }
-
-          const questionMessage: Message = {
-            id: (Date.now() + 2).toString(),
-            role: "assistant",
-            content: nextQuestion.question,
-            stage: nextStage.id,
-            field: nextQuestion.field,
-          }
-
-          setMessages((prev) => [...prev, transitionMessage, questionMessage])
-        } else {
-          // All done
-          const completionMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: "assistant",
-            content: `Excellent! Your ${framework.name} is complete. Review your decisions in the panel on the right, then save when you're ready.`,
-          }
-          setMessages((prev) => [...prev, completionMessage])
-        }
+      if (isLastQuestionInStage && !isLastStage) {
+        // Move to next stage
+        const nextStageIdx = currentStageIndex + 1
+        nextStage = config.stages[nextStageIdx]
+        responseContent = `Great! We've nailed down the ${currentStage.label}. ${nextStage.intro}`
+        setCurrentStageIndex(nextStageIdx)
+        setCurrentQuestionIndex(0)
+      } else if (!isLastQuestionInStage) {
+        // Move to next question in stage
+        const nextQIdx = currentQuestionIndex + 1
+        nextQuestion = currentStage.questions[nextQIdx]
+        responseContent = `Got it. ${nextQuestion.question}`
+        setCurrentQuestionIndex(nextQIdx)
+      } else if (isLastQuestionInStage && isLastStage) {
+        // Framework complete
+        responseContent = `Perfect! Your ${config.name} is complete and locked in. All decisions are captured with your reasoning.`
       }
 
-      setIsProcessing(false)
-    }, 300)
-  }
+      const agentMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'agent',
+        content: responseContent,
+        stage: nextStage.id,
+        locked: true,
+      }
 
-  const handleEditDecision = (field: string) => {
-    setEditingField(field)
+      setMessages((prev) => [...prev, agentMessage])
+      setIsLoading(false)
+    }, 600)
   }
-
-  const handleSaveEdit = (field: string, newValue: string) => {
-    setDecisions((prev) => ({
-      ...prev,
-      [field]: {
-        ...prev[field],
-        value: newValue,
-      },
-    }))
-    setEditingField(null)
-  }
-
-  const handleSaveFramework = () => {
-    console.log("Saving framework:", {
-      type: frameworkKey,
-      name: framework.name,
-      decisions,
-    })
-    router.push("/strategy")
-  }
-
-  const isComplete = completedStages.length === framework.stages.length
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex gap-6">
-      {/* Main Chat Panel */}
-      <div className="flex-1 flex flex-col min-w-0">
+    <div className="flex h-screen bg-background">
+      {/* Left Sidebar - Progress & Decisions */}
+      <div className="w-80 border-r bg-muted/30 flex flex-col">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-4">
-          <Link href="/strategy/new">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
+        <div className="p-4 border-b">
+          <Link href="/strategy/new" className="flex items-center gap-2 text-sm font-medium hover:opacity-75">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Frameworks
           </Link>
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${framework.bgColor}`}>
-              <Icon className={`h-5 w-5 ${framework.color}`} />
+        </div>
+
+        {/* Framework Info */}
+        <div className="p-4 border-b">
+          <div className="flex items-start gap-3">
+            <div className={`p-2 rounded-lg ${config.bgColor}`}>
+              <Icon className={`h-5 w-5 ${config.color}`} />
             </div>
             <div>
-              <h1 className="text-xl font-semibold">{framework.name}</h1>
-              <p className="text-sm text-muted-foreground">Answer questions to build your framework</p>
+              <h2 className="font-semibold text-sm">{config.name}</h2>
+              <p className="text-xs text-muted-foreground">{config.description}</p>
             </div>
           </div>
         </div>
 
-        {/* Progress Tracker */}
-        <Card className="mb-4 p-3">
-          <div className="flex items-center gap-2 overflow-x-auto">
-            {framework.stages.map((stage, index) => {
-              const isCompleted = completedStages.includes(stage.id)
-              const isCurrent = currentStageIndex === index && !isComplete
+        {/* Progress */}
+        <div className="p-4 border-b">
+          <div className="text-xs font-medium mb-3">
+            Progress: {answeredQuestions}/{totalQuestions} locked
+          </div>
+          <div className="w-full bg-muted rounded-full h-2">
+            <div
+              className="bg-primary h-2 rounded-full transition-all"
+              style={{ width: `${(answeredQuestions / totalQuestions) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Stage Progress */}
+        <ScrollArea className="flex-1 px-4 py-4">
+          <div className="space-y-4">
+            {config.stages.map((stage, idx) => {
+              const stageAnswered = lockedDecisions.filter((d) => d.stage === stage.id).length
+              const isCurrentStage = idx === currentStageIndex
+              const isCompleted = stageAnswered === stage.questions.length
 
               return (
-                <div key={stage.id} className="flex items-center gap-2 flex-shrink-0">
-                  <div
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
-                      isCompleted
-                        ? "bg-emerald-100 text-emerald-700"
-                        : isCurrent
-                          ? "bg-primary/10 text-primary"
-                          : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <Lock className="h-3.5 w-3.5" />
-                    ) : isCurrent ? (
-                      <Circle className="h-3.5 w-3.5" />
-                    ) : (
-                      <Circle className="h-3.5 w-3.5 opacity-50" />
-                    )}
-                    <span className="font-medium">{stage.label}</span>
+                <div key={stage.id} className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <div className="mt-1">
+                      {isCompleted ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      ) : isCurrentStage ? (
+                        <Circle className="h-5 w-5 text-primary" />
+                      ) : (
+                        <Circle className="h-5 w-5 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{stage.label}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {stageAnswered}/{stage.questions.length} answers
+                      </p>
+                    </div>
                   </div>
-                  {index < framework.stages.length - 1 && (
-                    <div className={`w-6 h-px ${isCompleted ? "bg-emerald-300" : "bg-border"}`} />
+
+                  {/* Question list for current stage */}
+                  {isCurrentStage && (
+                    <div className="ml-7 space-y-1">
+                      {stage.questions.map((q, qIdx) => {
+                        const isAnswered = lockedDecisions.some((d) => d.field === q.field)
+                        return (
+                          <div
+                            key={q.id}
+                            className={`text-xs p-2 rounded ${
+                              isAnswered
+                                ? 'bg-green-50 text-green-700'
+                                : qIdx === currentQuestionIndex
+                                  ? 'bg-primary/10 text-primary'
+                                  : 'text-muted-foreground'
+                            }`}
+                          >
+                            {isAnswered && <Lock className="h-3 w-3 inline mr-1" />}
+                            {q.question.substring(0, 40)}...
+                          </div>
+                        )
+                      })}
+                    </div>
                   )}
                 </div>
               )
             })}
           </div>
-        </Card>
+        </ScrollArea>
 
-        {/* Chat Messages */}
-        <Card className="flex-1 flex flex-col min-h-0">
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[85%] rounded-lg p-4 ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted/50 border border-border text-foreground"
-                    }`}
-                  >
-                    {message.stage && message.role === "assistant" && (
-                      <Badge variant="outline" className="mb-2 text-xs">
-                        {framework.stages.find((s) => s.id === message.stage)?.label}
-                      </Badge>
-                    )}
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollArea>
-
-          {/* Input Area */}
-          {!isComplete && (
-            <div className="p-4 border-t">
-              <div className="flex gap-2">
-                <Textarea
-                  placeholder="Type your answer..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault()
-                      handleSendMessage()
-                    }
-                  }}
-                  className="min-h-[60px] resize-none"
-                  rows={2}
-                />
-                <Button onClick={handleSendMessage} size="icon" className="h-[60px] w-[60px]" disabled={isProcessing}>
-                  {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">Press Enter to send, Shift+Enter for new line</p>
-            </div>
-          )}
-        </Card>
+        {/* Save */}
+        <div className="p-4 border-t">
+          <Button className="w-full" disabled={answeredQuestions === 0}>
+            Save & Create Framework
+          </Button>
+        </div>
       </div>
 
-      {/* Decisions Panel */}
-      <Card className="w-80 flex flex-col flex-shrink-0">
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Decisions</h2>
-            {isComplete && (
-              <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Complete</Badge>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">Your locked-in answers</p>
-        </div>
-
-        <ScrollArea className="flex-1 p-4">
-          <div className="space-y-4">
-            {framework.stages.map((stage) => {
-              const stageDecisions = stage.questions
-                .map((q) => ({ ...q, decision: decisions[q.field] }))
-                .filter((q) => q.decision)
-
-              if (stageDecisions.length === 0) return null
-
-              return (
-                <div key={stage.id}>
-                  <div className="flex items-center gap-2 mb-2">
-                    {completedStages.includes(stage.id) ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    ) : (
-                      <Circle className="h-4 w-4 text-muted-foreground" />
-                    )}
-                    <span className="text-sm font-medium">{stage.label}</span>
-                  </div>
-                  <div className="space-y-3 ml-6">
-                    {stageDecisions.map(({ field, decision }) => (
-                      <div key={field} className="group">
-                        {editingField === field ? (
-                          <div className="space-y-2">
-                            <Textarea
-                              defaultValue={decision?.value}
-                              className="text-sm"
-                              rows={3}
-                              id={`edit-${field}`}
-                            />
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setEditingField(null)}
-                                className="bg-transparent"
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  const textarea = document.getElementById(`edit-${field}`) as HTMLTextAreaElement
-                                  handleSaveEdit(field, textarea.value)
-                                }}
-                              >
-                                Save
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex items-start gap-2">
-                            <p className="text-sm text-muted-foreground flex-1 line-clamp-3">
-                              {decision?.value}
-                            </p>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleEditDecision(field)}
-                            >
-                              <Edit2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <Separator className="mt-4" />
+      {/* Main Content - Conversation */}
+      <div className="flex-1 flex flex-col">
+        {/* Messages */}
+        <ScrollArea className="flex-1 p-6">
+          <div className="space-y-6 max-w-3xl">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex ${msg.type === 'agent' ? 'justify-start' : 'justify-end'}`}
+              >
+                <div
+                  className={`max-w-lg ${
+                    msg.type === 'agent'
+                      ? 'bg-muted/50 border rounded-lg'
+                      : 'bg-primary text-primary-foreground rounded-lg'
+                  } p-4`}
+                >
+                  {msg.type === 'agent' && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon className={`h-4 w-4 ${config.color}`} />
+                      <span className="text-xs font-medium">{config.name}</span>
+                    </div>
+                  )}
+                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  {msg.locked && (
+                    <div className="flex items-center gap-1 mt-2 text-xs opacity-75">
+                      <Lock className="h-3 w-3" />
+                      <span>Decision locked</span>
+                    </div>
+                  )}
                 </div>
-              )
-            })}
-
-            {Object.keys(decisions).length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                Decisions will appear here as you answer questions
-              </p>
-            )}
+              </div>
+            ))}
+            <div ref={scrollRef} />
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t">
-          <Button className="w-full" onClick={handleSaveFramework} disabled={!decisions.name}>
-            <Save className="h-4 w-4 mr-2" />
-            Save Framework
-          </Button>
+        {/* Input Area */}
+        <div className="border-t p-6 bg-muted/30">
+          {currentQuestion && (
+            <div className="mb-4">
+              <div className="flex items-start gap-2 mb-3">
+                <div className="text-xs font-medium text-muted-foreground">
+                  {currentStage.label} • Question {currentQuestionIndex + 1}
+                </div>
+                {currentQuestion.required && (
+                  <Badge variant="secondary" className="text-xs">
+                    Required
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm font-medium mb-2">{currentQuestion.question}</p>
+              {currentQuestion.hint && (
+                <Alert className="mb-3">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-xs">{currentQuestion.hint}</AlertDescription>
+                </Alert>
+              )}
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <Textarea
+              placeholder="Type your answer..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.ctrlKey && input.trim()) {
+                  handleSubmitAnswer()
+                }
+              }}
+              disabled={isLoading}
+              className="min-h-20 resize-none"
+            />
+            <Button
+              onClick={handleSubmitAnswer}
+              disabled={!input.trim() || isLoading}
+              className="gap-2"
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">Lock Answer</span>
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Ctrl+Enter to submit • Each answer locks your reasoning in place
+          </p>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }
