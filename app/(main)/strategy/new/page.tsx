@@ -11,8 +11,8 @@ const frameworks = [
     category: "Target Audience",
     icon: Building2,
     href: "/strategy/new/build?framework=icp",
-    color: "text-blue-600",
-    bgColor: "bg-blue-50",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
   },
   {
     id: "persona",
@@ -21,8 +21,8 @@ const frameworks = [
     category: "Target Audience",
     icon: User,
     href: "/strategy/new/build?framework=persona",
-    color: "text-violet-600",
-    bgColor: "bg-violet-50",
+    color: "text-secondary",
+    bgColor: "bg-secondary/10",
   },
   {
     id: "positioning",
@@ -31,8 +31,8 @@ const frameworks = [
     category: "Positioning",
     icon: Target,
     href: "/strategy/new/build?framework=positioning",
-    color: "text-emerald-600",
-    bgColor: "bg-emerald-50",
+    color: "text-accent",
+    bgColor: "bg-accent/10",
   },
   {
     id: "messaging-house",
@@ -41,8 +41,8 @@ const frameworks = [
     category: "Messaging",
     icon: MessageSquare,
     href: "/strategy/new/build?framework=messaging-house",
-    color: "text-orange-600",
-    bgColor: "bg-orange-50",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
   },
   {
     id: "sales-pitch",
@@ -51,8 +51,8 @@ const frameworks = [
     category: "Messaging",
     icon: Mic2,
     href: "/strategy/new/build?framework=sales-pitch",
-    color: "text-rose-600",
-    bgColor: "bg-rose-50",
+    color: "text-secondary",
+    bgColor: "bg-secondary/10",
   },
   {
     id: "launch",
@@ -61,8 +61,8 @@ const frameworks = [
     category: "GTM Planning",
     icon: Rocket,
     href: "/strategy/new/build?framework=launch",
-    color: "text-indigo-600",
-    bgColor: "bg-indigo-50",
+    color: "text-accent",
+    bgColor: "bg-accent/10",
   },
   {
     id: "campaign",
@@ -71,8 +71,8 @@ const frameworks = [
     category: "GTM Planning",
     icon: Megaphone,
     href: "/strategy/new/build?framework=campaign",
-    color: "text-amber-600",
-    bgColor: "bg-amber-50",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
   },
 ]
 

@@ -39,15 +39,15 @@ function getAssetIcon(type: EnablementAsset["type"]) {
 function getStatusColor(status: EnablementAsset["status"]) {
   switch (status) {
     case "draft":
-      return "bg-gray-100 text-gray-700"
+      return "bg-muted text-muted-foreground"
     case "in-review":
-      return "bg-yellow-100 text-yellow-700"
+      return "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
     case "delivered":
-      return "bg-green-100 text-green-700"
+      return "bg-accent/10 text-accent dark:text-accent"
     case "approved":
-      return "bg-blue-100 text-blue-700"
+      return "bg-primary/10 text-primary dark:text-blue-400"
     default:
-      return "bg-gray-100 text-gray-700"
+      return "bg-muted text-muted-foreground"
   }
 }
 
@@ -113,8 +113,8 @@ export function EnablementAssetCard({ asset }: EnablementAssetCardProps) {
             <Users className="h-4 w-4 text-muted-foreground" />
             <div className="flex -space-x-2">
               {asset.stakeholders.slice(0, 3).map((stakeholder, idx) => (
-                <Avatar key={idx} className="h-6 w-6 border-2 border-white">
-                  <AvatarFallback className="text-xs bg-blue-100 text-blue-700">
+                <Avatar key={idx} className="h-6 w-6 border-2 border-white dark:border-slate-800">
+                  <AvatarFallback className="text-xs bg-primary/10 text-primary dark:text-blue-300">
                     {getInitials(stakeholder.name)}
                   </AvatarFallback>
                 </Avatar>

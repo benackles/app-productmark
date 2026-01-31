@@ -47,8 +47,8 @@ export default function MarketOpportunityClient() {
     <div className="space-y-6 pb-20">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-green-50">
-            <TrendingUp className="h-5 w-5 text-green-600" />
+          <div className="p-2 rounded-lg bg-accent/10">
+            <TrendingUp className="h-5 w-5 text-accent" />
           </div>
           <div className="space-y-1">
             <h1 className="text-3xl font-bold">Market Opportunity Framework</h1>

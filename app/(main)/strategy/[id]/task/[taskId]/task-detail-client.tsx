@@ -28,9 +28,9 @@ const statusLabels = {
 }
 
 const priorityColors = {
-  high: "bg-red-100 text-red-700 border-red-300",
-  medium: "bg-yellow-100 text-yellow-700 border-yellow-300",
-  low: "bg-blue-100 text-blue-700 border-blue-300",
+  high: "bg-destructive/10 text-destructive border-destructive/30 dark:text-red-400",
+  medium: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700",
+  low: "bg-primary/10 text-primary border-primary/30 dark:text-blue-400",
 }
 
 export default function TaskDetailClient({ framework, task }: TaskDetailClientProps) {

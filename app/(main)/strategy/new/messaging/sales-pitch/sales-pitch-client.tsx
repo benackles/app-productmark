@@ -35,8 +35,8 @@ export default function SalesPitchClient() {
   return (
     <div className="flex flex-col gap-6 pb-20">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-indigo-50">
-          <Presentation className="h-5 w-5 text-indigo-600" />
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <Presentation className="h-5 w-5 text-secondary" />
         </div>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Sales Pitch Narrative</h1>

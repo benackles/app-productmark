@@ -36,7 +36,7 @@ function GTMFrameworkClient({ framework }: GTMFrameworkClientProps) {
           </p>
         </div>
         <Link href={`/strategy/${framework.id}/edit`}>
-          <Button className="bg-[#6B8F71] hover:bg-[#5a7860] text-white">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Pencil className="h-4 w-4 mr-2" />
             Edit Strategy
           </Button>
@@ -51,8 +51,8 @@ function GTMFrameworkClient({ framework }: GTMFrameworkClientProps) {
               <p className="text-sm text-muted-foreground mb-1">Total Tasks</p>
               <p className="text-2xl font-bold">{framework.tasks.length}</p>
             </div>
-            <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-              <Target className="h-6 w-6 text-blue-500" />
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Target className="h-6 w-6 text-primary" />
             </div>
           </div>
         </div>
@@ -65,8 +65,8 @@ function GTMFrameworkClient({ framework }: GTMFrameworkClientProps) {
                 {completedTasks} <span className="text-sm text-muted-foreground">({completionPercentage}%)</span>
               </p>
             </div>
-            <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-              <CheckCircle2 className="h-6 w-6 text-green-500" />
+            <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center">
+              <CheckCircle2 className="h-6 w-6 text-accent" />
             </div>
           </div>
         </div>
@@ -77,8 +77,8 @@ function GTMFrameworkClient({ framework }: GTMFrameworkClientProps) {
               <p className="text-sm text-muted-foreground mb-1">Kicked off</p>
               <p className="text-2xl font-bold">{formatDate(framework.createdAt)}</p>
             </div>
-            <div className="h-12 w-12 rounded-full bg-purple-500/10 flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-purple-500" />
+            <div className="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center">
+              <Calendar className="h-6 w-6 text-secondary" />
             </div>
           </div>
         </div>
@@ -89,8 +89,8 @@ function GTMFrameworkClient({ framework }: GTMFrameworkClientProps) {
               <p className="text-sm text-muted-foreground mb-1">Last Updated</p>
               <p className="text-2xl font-bold">{formatDate(framework.lastModified)}</p>
             </div>
-            <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center">
-              <TrendingUp className="h-6 w-6 text-orange-500" />
+            <div className="h-12 w-12 rounded-full bg-muted/30 flex items-center justify-center">
+              <TrendingUp className="h-6 w-6 text-muted-foreground" />
             </div>
           </div>
         </div>

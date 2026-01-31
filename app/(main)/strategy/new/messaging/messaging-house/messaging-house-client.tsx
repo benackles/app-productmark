@@ -57,8 +57,8 @@ export default function MessagingHouseClient() {
     <div className="flex flex-col gap-6 pb-20">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-orange-50">
-            <MessageSquare className="h-5 w-5 text-orange-600" />
+          <div className="p-2 rounded-lg bg-primary/10">
+            <MessageSquare className="h-5 w-5 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Campaign Messaging House</h1>

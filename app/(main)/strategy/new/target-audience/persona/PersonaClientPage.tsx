@@ -50,8 +50,8 @@ export default function PersonaClientPage() {
   return (
     <div className="flex flex-col gap-6 pb-20">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-green-50">
-          <User className="h-5 w-5 text-green-600" />
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <User className="h-5 w-5 text-secondary" />
         </div>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Buyer Persona</h1>

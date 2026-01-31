@@ -103,7 +103,7 @@ function StrategyFrameworkClient({ framework }: StrategyFrameworkClientProps) {
           <p className="text-muted-foreground">{framework.description}</p>
         </div>
         <Link href={`/strategy/${framework.id}/edit`}>
-          <Button className="bg-[#6B8F71] hover:bg-[#5a7860] text-white">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Pencil className="h-4 w-4 mr-2" />
             Edit Framework
           </Button>
@@ -114,8 +114,8 @@ function StrategyFrameworkClient({ framework }: StrategyFrameworkClientProps) {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="p-4 rounded-xl border bg-card">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-              <User className="h-5 w-5 text-blue-500" />
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="h-5 w-5 text-primary" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Created by</p>
@@ -126,8 +126,8 @@ function StrategyFrameworkClient({ framework }: StrategyFrameworkClientProps) {
 
         <div className="p-4 rounded-xl border bg-card">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-              <Calendar className="h-5 w-5 text-green-500" />
+            <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center">
+              <Calendar className="h-5 w-5 text-accent" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Created</p>

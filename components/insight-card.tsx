@@ -18,23 +18,23 @@ interface InsightCardProps {
 
 const typeConfig = {
   customer: {
-    color: "bg-blue-500",
-    textColor: "text-blue-600",
-    bgColor: "bg-blue-50 dark:bg-blue-950",
+    color: "bg-primary",
+    textColor: "text-primary",
+    bgColor: "bg-primary/10 dark:bg-primary/20",
     icon: Users,
     label: "Customer",
   },
   competitive: {
-    color: "bg-red-500",
-    textColor: "text-red-600",
-    bgColor: "bg-red-50 dark:bg-red-950",
+    color: "bg-destructive",
+    textColor: "text-destructive",
+    bgColor: "bg-destructive/10 dark:bg-destructive/20",
     icon: Target,
     label: "Competitive",
   },
   market: {
-    color: "bg-green-500",
-    textColor: "text-green-600",
-    bgColor: "bg-green-50 dark:bg-green-950",
+    color: "bg-accent",
+    textColor: "text-accent",
+    bgColor: "bg-accent/10 dark:bg-accent/20",
     icon: TrendingUp,
     label: "Market",
   },

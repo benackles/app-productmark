@@ -46,8 +46,8 @@ export default function ICPClientPage() {
   return (
     <div className="flex flex-col gap-6 pb-20">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-blue-50">
-          <Building2 className="h-5 w-5 text-blue-600" />
+        <div className="p-2 rounded-lg bg-primary/10">
+          <Building2 className="h-5 w-5 text-primary" />
         </div>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Ideal Customer Profile</h1>

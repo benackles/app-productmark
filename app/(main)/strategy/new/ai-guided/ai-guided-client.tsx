@@ -194,7 +194,7 @@ export default function AIGuidedStrategyClient() {
                   <div
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
                       isCompleted
-                        ? "bg-green-100 text-green-700"
+                        ? "bg-accent/10 text-accent"
                         : isCurrent
                           ? "bg-primary/10 text-primary"
                           : "bg-muted text-muted-foreground"

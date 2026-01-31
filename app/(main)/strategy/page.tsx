@@ -108,8 +108,8 @@ export default function StrategyPage() {
               <p className="text-sm text-muted-foreground mb-1">Target Audience</p>
               <p className="text-2xl font-bold">{targetAudienceCount}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
-              <Users className="h-6 w-6 text-blue-500" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <Users className="h-6 w-6 text-primary" />
             </div>
           </div>
         </button>
@@ -125,8 +125,8 @@ export default function StrategyPage() {
               <p className="text-sm text-muted-foreground mb-1">Positioning</p>
               <p className="text-2xl font-bold">{positioningCount}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/10">
-              <Target className="h-6 w-6 text-orange-500" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+              <Target className="h-6 w-6 text-accent" />
             </div>
           </div>
         </button>
@@ -142,8 +142,8 @@ export default function StrategyPage() {
               <p className="text-sm text-muted-foreground mb-1">Messaging</p>
               <p className="text-2xl font-bold">{messagingCount}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/10">
-              <MessageSquare className="h-6 w-6 text-purple-500" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/10">
+              <MessageSquare className="h-6 w-6 text-secondary" />
             </div>
           </div>
         </button>
@@ -159,8 +159,8 @@ export default function StrategyPage() {
               <p className="text-sm text-muted-foreground mb-1">GTM Planning</p>
               <p className="text-2xl font-bold">{gtmPlanningCount}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
-              <Rocket className="h-6 w-6 text-green-500" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted/30">
+              <Rocket className="h-6 w-6 text-muted-foreground" />
             </div>
           </div>
         </button>

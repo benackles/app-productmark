@@ -153,8 +153,8 @@ export default function ToneOfVoiceClient() {
     <div className="flex flex-col gap-6 pb-20">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-purple-50">
-            <Volume2 className="h-5 w-5 text-purple-600" />
+          <div className="p-2 rounded-lg bg-secondary/10">
+            <Volume2 className="h-5 w-5 text-secondary" />
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Tone of Voice Guide</h1>
